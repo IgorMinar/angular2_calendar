@@ -8,39 +8,30 @@
     }
   </style>
 
-  <script src="/node_modules/es6-module-loader/dist/es6-module-loader-sans-promises.js"></script>
+  <script src="/vendor/zone.js/zone.js"></script>
+  <script src="/vendor/zone.js/long-stack-trace-zone.js"></script>
+  <script src="/vendor/traceur/traceur-runtime.js"></script>
   <script src="/vendor/systemjs/system.js"></script>
-  <script src="/node_modules/zone.js/zone.js"></script>
-  <script src="/node_modules/zone.js/long-stack-trace-zone.js"></script>
 
   <script>
-      // atscript without runtime-type assertions.
-      System.traceurOptions = {
-        annotations: true,
-        memberVariables: true,
-        typeAssertions: false,
-        types: true
-      };
-
+    zone = zone.fork(Zone.longStackTraceZone);
     System.config({
       baseURL: '/',
       paths: {
         //'index.js': 'index.js',
         'angular2/*':'/vendor/angular2/*.js',
+        'rx/*':'/vendor/rx/*.js',
+        'rtts_assert/*':'/vendor/rtts_assert/*.js',
+        'lodash/*':'/vendor/lodash/*.js',
         'components/*': 'components/*.js',
         'decorators/*': 'decorators/*.js',
         'services/*': 'services/*.js',
-        'stores/*': 'stores/*.js'
+        'stores/*': 'stores/*.js',
+        '*': '*.js'
       },
     });
 
-    System.import('index.js')
-    .then(function(module) {
-      // uncomment for debugging.
-      // zone = zone.fork(Zone.longStackTraceZone);
-      return module.main();
-    })
-    .catch(console.error.bind(console));
+    System.import('index');
   </script>
 </head>
 <body>

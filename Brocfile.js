@@ -13,17 +13,12 @@ var appScripts = new Funnel('app', {
 });
 //appScripts = stew.log(appScripts, { output: 'tree', label: 'appScripts' })
 
-
 var appAssets =  new Funnel('app', {
-    include: ['index.html'],
+    include: ['**/*.html'],
 
     // TODO(i): temporarily rename index.html to index-debug.html so that directory listing is served at /
     getDestinationPath: function(relativePath) {
-        if (relativePath === 'index.html') {
-            relativePath = 'index-debug.html'
-        }
-
-        return relativePath;
+        return relativePath === 'index.html' ? 'index-debug.html' : relativePath;
     }
 });
 //appAssets = stew.log(appAssets, { output: 'tree', label: 'appAssets' })
@@ -42,12 +37,37 @@ var systemjs = new Funnel('node_modules/systemjs', {
 });
 //systemjs = stew.log(systemjs, { output: 'tree', label: 'systemjs' })
 
+var es6ModuleLoader = new Funnel('node_modules/es6-module-loader', {
+    srcDir: '/dist/',
+    destDir: '/vendor/systemjs'
+});
+
+var zonejs = new Funnel('node_modules/zone.js', {
+    destDir: '/vendor/zone.js'
+});
+
+var traceurDeps = new Funnel('node_modules/traceur', {
+    srcDir: '/bin/',
+    destDir: '/vendor/traceur'
+});
+
+var rttsAsserts = new Funnel('node_modules/rtts_assert/', {
+    srcDir: '/',
+    destDir: '/vendor/rtts_assert'
+});
+
+var rx = new Funnel('node_modules/rx', {
+    destDir: '/vendor/rx'
+});
+
 
 var es6SuffixRexexp = /(.+)\.es6/;
-var angularES6 = new Funnel('node_modules/angular2', {
-    srcDir: '/es6/prod/',
+
+function angularES6(prodOrDev) {
+  return new Funnel('node_modules/angular2', {
+    srcDir: '/es6/' + prodOrDev + '/',
     include: ['**/*.es6', '**/*.map'],
-    destDir: '/vendor/angular',
+    destDir: '/vendor/angular2',
     getDestinationPath: function(relativePath) {
         if (es6SuffixRexexp.test(relativePath)) {
             relativePath = relativePath.replace(es6SuffixRexexp, '$1.js');
@@ -55,37 +75,29 @@ var angularES6 = new Funnel('node_modules/angular2', {
 
         return relativePath;
     }
-});
-//angularES6 = stew.log(angularES6, { output: 'tree', label: 'angularES6' })
-
-var angularBabel = babelTranspiler(angularES6, {
-    sourceMap: 'inline',
-    modules: 'system',
-    moduleIds: true
-});
-angularBabel = stew.rename(angularBabel, 'vendor/angular', 'vendor/angular-babel');
+  });
+}
 
 
-var angularTraceur = traceurCompiler(angularES6, {
-    sourceMaps: true,
-    //annotations: true, // parse annotations
-    //types: true, // parse types
-    //script: false, // parse as a module
-    //memberVariables: true, // parse class fields
+var DEV = false;
+
+var angularES6Prod = angularES6('prod');
+var angularES6Dev = angularES6('dev');
+
+var vendorDeps = [lodash, systemjs, zonejs, es6ModuleLoader, traceurDeps, rx];
+
+var vendorFilesProd = mergeTrees(vendorDeps);
+var vendorFilesDev = mergeTrees(vendorDeps.concat([rttsAsserts]));
+
+var es5Files = traceurCompiler(mergeTrees([appScripts, DEV ? angularES6Dev : angularES6Prod]), {
+    annotations: true,
+    memberVariables: true,
+    typeAssertions: false,
+    types: true,
     modules: 'instantiate'
 });
-angularTraceur = stew.rename(angularTraceur, 'vendor/angular', 'vendor/angular-traceur');
 
-
-var vendorFiles = mergeTrees([lodash, systemjs, angularBabel, angularTraceur]);
-
-
-var ts2jsFiles = typescriptCompiler(mergeTrees([appScripts, angularES6]));
-//ts2jsFiles = stew.log(ts2jsFiles, { output: 'tree', label: 'ts2jsFiles' });
-
-
-
-module.exports = mergeTrees([ts2jsFiles, appAssets, vendorFiles]);
+module.exports = mergeTrees([es5Files, appAssets, DEV ? vendorFilesDev : vendorFilesProd]);
 
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -103,10 +115,12 @@ module.exports = mergeTrees([ts2jsFiles, appAssets, vendorFiles]);
  */
 
 //var es5 = traceurTranspiler(mergeTrees([appScripts, angularES6]), {
+//    sourceMaps: true,
 //    //annotations: true,
 //    //memberVariables: true,
 //    typeAssertions: false,
-//    types: true
+//    types: true,
+//    modules: instantiate
 //});
 
 
@@ -121,3 +135,11 @@ module.exports = mergeTrees([ts2jsFiles, appAssets, vendorFiles]);
 //    modules: 'amd',
 //    moduleIds: true
 //});
+
+
+//var angularBabel = babelTranspiler(angularES6, {
+//    sourceMap: 'inline',
+//    modules: 'system',
+//    moduleIds: true
+//});
+//angularBabel = stew.rename(angularBabel, 'vendor/angular', 'vendor/angular-babel');

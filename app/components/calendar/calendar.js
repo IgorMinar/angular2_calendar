@@ -1,7 +1,7 @@
-import {Component, Foreach, Template, If} from 'angular2/angular2';
+import {Component, For, Template, If} from 'angular2/angular2';
 import {CalendarCell} from 'components/calendar-cell/calendar-cell';
 import {searchAllCells} from 'stores/registry';
-import _ from '../../node_modules/lodash/index';
+import _ from 'lodash/index';
 
 var DAYS = _.range(1, 32).map((day) => ("Oct " + day));
 
@@ -9,9 +9,9 @@ var DAYS = _.range(1, 32).map((day) => ("Oct " + day));
   selector: 'calendar',
 })
 @Template({
-  url: System.baseURL+'app/components/calendar/calendar.html',
+  url: 'components/calendar/calendar.html',
   directives: [
-    Foreach,
+    For,
     If,
     CalendarCell
   ]

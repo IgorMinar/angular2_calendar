@@ -63,12 +63,12 @@
  <button class="btn" *if="isLoaded"  (click)="searchAll()">Search all month</button>
  <table *if="isLoaded">
   <tr>
-    <th template="foreach: #day in days" class="day-header" (click)="dayHeaderClicked(day)">
+    <th template="for: #day of days" class="day-header" (click)="dayHeaderClicked(day)">
      {{day}}
    </th>
   </tr>
-  <tr template="foreach: #hour in hours">
-   <td template="foreach: #day in days" class="hour-cell">
+  <tr template="for: #hour of hours">
+   <td template="for: #day of days" class="hour-cell">
      <calendar-cell [hour]="hour" [day]="day" />
    </td>
   </tr>

@@ -5,16 +5,17 @@
   "main": "main.js",
   "dependencies": {
     "angular2": "^2.0.0-alpha.7.dev",
-    "lodash": "^3.4.0",
-    "systemjs": "^0.14.1",
 
     "es6-module-loader": "^0.14.0",
-
+    "lodash": "^3.4.0",
     "rtts_assert": "2.0.0-alpha.13",
+    "rx": "^2.4.6",
+    "systemjs": "^0.14.1",
+    "traceur": "^0.0.87",
     "zone.js": "0.4.0"
   },
   "devDependencies": {
-    "brcoccoli-babel-transpiler": "^5.0.0",
+    "broccoli-babel-transpiler": "^5.0.0",
     "broccoli-funnel": "^0.2.2",
     "broccoli-merge-trees": "^0.2.1",
     "broccoli-stew": "^0.2.1",

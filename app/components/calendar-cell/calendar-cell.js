@@ -1,6 +1,5 @@
-import {Component, Foreach, Template, If} from 'angular2/angular2';
+import {Component, For, Template, If, BindingPropagationConfig} from 'angular2/angular2';
 import {addCell} from 'stores/registry';
-import {BindingPropagationConfig} from 'angular2/core';
 
 var randomMillis = function() {
   return 0; //Math.floor(Math.random() * 500);
@@ -14,9 +13,9 @@ var randomMillis = function() {
   }
 })
 @Template({
-  url: System.baseURL+'app/components/calendar-cell/calendar-cell.html',
+  url: 'components/calendar-cell/calendar-cell.html',
   directives: [
-    Foreach, If
+    For, If
   ]
 })
 export class CalendarCell {
