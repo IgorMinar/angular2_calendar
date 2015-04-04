@@ -89,6 +89,8 @@ var vendorDeps = [lodash, systemjs, zonejs, es6ModuleLoader, traceurDeps, rx];
 var vendorFilesProd = mergeTrees(vendorDeps);
 var vendorFilesDev = mergeTrees(vendorDeps.concat([rttsAsserts]));
 
+var ts2jsFiles = new typescriptCompiler(mergeTrees([appScripts, DEV ? angularES6Dev : angularES6Prod]));
+//ts2jsFiles = stew.log(ts2jsFiles, { output: 'tree', label: 'ts2jsFiles' });
 var es5Files = traceurCompiler(mergeTrees([appScripts, DEV ? angularES6Dev : angularES6Prod]), {
     annotations: true,
     memberVariables: true,
@@ -97,7 +99,7 @@ var es5Files = traceurCompiler(mergeTrees([appScripts, DEV ? angularES6Dev : ang
     modules: 'instantiate'
 });
 
-module.exports = mergeTrees([es5Files, appAssets, DEV ? vendorFilesDev : vendorFilesProd]);
+module.exports = mergeTrees([ts2jsFiles, appAssets, DEV ? vendorFilesDev : vendorFilesProd]);
 
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
