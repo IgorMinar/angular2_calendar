@@ -14,9 +14,11 @@
     "zone.js": "0.4.0"
   },
   "devDependencies": {
+    "brcoccoli-babel-transpiler": "^5.0.0",
     "broccoli-funnel": "^0.2.2",
     "broccoli-merge-trees": "^0.2.1",
-    "broccoli-stew": "^0.2.1"
+    "broccoli-stew": "^0.2.1",
+    "broccoli-traceur": "^0.13.0"
   },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"

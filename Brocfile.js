@@ -1,6 +1,8 @@
 var Funnel = require('broccoli-funnel');
 var mergeTrees = require('broccoli-merge-trees');
 var typescriptCompiler = require('./broccoli-typescript');
+var babelTranspiler = require('broccoli-babel-transpiler');
+var traceurCompiler = require('broccoli-traceur');
 var stew = require('broccoli-stew');
 
 
@@ -56,7 +58,26 @@ var angularES6 = new Funnel('node_modules/angular2', {
 });
 //angularES6 = stew.log(angularES6, { output: 'tree', label: 'angularES6' })
 
-var vendorFiles = mergeTrees([lodash, systemjs]);
+var angularBabel = babelTranspiler(angularES6, {
+    sourceMap: 'inline',
+    modules: 'system',
+    moduleIds: true
+});
+angularBabel = stew.rename(angularBabel, 'vendor/angular', 'vendor/angular-babel');
+
+
+var angularTraceur = traceurCompiler(angularES6, {
+    sourceMaps: true,
+    //annotations: true, // parse annotations
+    //types: true, // parse types
+    //script: false, // parse as a module
+    //memberVariables: true, // parse class fields
+    modules: 'instantiate'
+});
+angularTraceur = stew.rename(angularTraceur, 'vendor/angular', 'vendor/angular-traceur');
+
+
+var vendorFiles = mergeTrees([lodash, systemjs, angularBabel, angularTraceur]);
 
 
 var ts2jsFiles = typescriptCompiler(mergeTrees([appScripts, angularES6]));
